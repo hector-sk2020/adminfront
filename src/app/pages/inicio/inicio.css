@@ -1,0 +1,288 @@
+/* ================= CONTENEDOR ================= */
+.admin-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ================= TÍTULOS ================= */
+h1 {
+  color: #6a1b2a;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, #6a1b2a, #a23b4d);
+  border-radius: 4px;
+}
+
+/* ================= CARD BASE ================= */
+.verification-summary,
+.form-card,
+.table-card {
+  background: linear-gradient(180deg, #ffffff 0%, #faf7f7 100%);
+  padding: 24px 28px;
+  border-radius: 18px;
+  border: 1px solid rgba(106, 27, 42, 0.18);
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+
+  transition: all 0.3s ease;
+}
+
+/* Hover elegante */
+.verification-summary:hover,
+.form-card:hover,
+.table-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.14),
+    0 8px 18px rgba(106,27,42,0.18);
+}
+
+/* ================= VERIFICACIONES ================= */
+.verification-summary.highlight {
+  background: linear-gradient(180deg, #fff4f6, #fde6ea);
+  border: 2px solid #6a1b2a;
+  box-shadow:
+    0 20px 45px rgba(106,27,42,0.25);
+}
+
+.verification-summary h2 {
+  color: #6a1b2a;
+  font-weight: 800;
+}
+
+.verification-summary p {
+  font-size: 1.05rem;
+  color: #4a0f1a;
+}
+
+.verification-summary .badge {
+  background: linear-gradient(135deg, #8e2430, #6a1b2a);
+  color: #fff;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(106,27,42,0.35);
+}
+
+/* ================= FORMULARIO ================= */
+.form-card h2,
+.table-card h2 {
+  color: #6a1b2a;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+
+.form-card input,
+.form-card select {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.form-card input:focus,
+.form-card select:focus {
+  border-color: #6a1b2a;
+  box-shadow: 0 0 0 4px rgba(106,27,42,0.18);
+  outline: none;
+}
+
+/* ================= BOTONES ================= */
+button {
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  border-radius: 999px;
+  padding: 10px 20px;
+  transition: all 0.25s ease;
+}
+
+/* Botón principal */
+.verification-summary button,
+.form-card button {
+  background: linear-gradient(135deg, #6a1b2a, #4a0f1a);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(106,27,42,0.4);
+}
+
+.verification-summary button:hover,
+.form-card button:hover {
+  background: linear-gradient(135deg, #8e2430, #6a1b2a);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(106,27,42,0.55);
+}
+
+/* Botón eliminar */
+button.delete {
+  background: linear-gradient(135deg, #b71c1c, #7f0000);
+  box-shadow: 0 6px 16px rgba(183,28,28,0.4);
+}
+
+button.delete:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
+
+/* ================= TABLA ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+table th {
+  background: linear-gradient(135deg, #f3e0e4, #f8eaed);
+  color: #6a1b2a;
+  font-weight: 800;
+}
+
+table th,
+table td {
+  padding: 14px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table tr:hover {
+  background: rgba(106,27,42,0.06);
+}
+
+/* ================= ESTADOS ================= */
+.status-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6);
+}
+
+.status-circle.approved {
+  background: linear-gradient(135deg, #00ff2f, #248e26);
+}
+
+.status-circle.pending {
+  background: linear-gradient(135deg, #d32f2f, #b71c1c);
+}
+/* ================= RESPONSIVE MOBILE ================= */
+@media (max-width: 768px) {
+
+  /* Contenedor */
+  .admin-container {
+    padding: 16px;
+    gap: 20px;
+  }
+
+  /* Títulos */
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h1::after {
+    width: 40px;
+    height: 3px;
+  }
+
+  .verification-summary h2,
+  .form-card h2,
+  .table-card h2 {
+    font-size: 1.15rem;
+  }
+
+  /* Cards */
+  .verification-summary,
+  .form-card,
+  .table-card {
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow:
+      0 6px 16px rgba(0,0,0,0.12);
+  }
+
+  /* Quitar hover en móvil */
+  .verification-summary:hover,
+  .form-card:hover,
+  .table-card:hover {
+    transform: none;
+    box-shadow:
+      0 6px 16px rgba(0,0,0,0.12);
+  }
+
+  /* Badges */
+  .verification-summary .badge {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+  }
+
+  /* Botones */
+  button {
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+  }
+
+  button.delete {
+    margin-top: 6px;
+  }
+
+  /* Formularios */
+  .form-card input,
+  .form-card select {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  /* TABLA RESPONSIVE */
+  .table-card {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 600px;
+    font-size: 0.85rem;
+  }
+
+  table th,
+  table td {
+    padding: 10px;
+  }
+
+  /* Indicador visual de scroll */
+  .table-card::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .table-card::-webkit-scrollbar-thumb {
+    background: rgba(106,27,42,0.4);
+    border-radius: 6px;
+  }
+
+  /* Estados */
+  .status-circle {
+    width: 12px;
+    height: 12px;
+  }
+}

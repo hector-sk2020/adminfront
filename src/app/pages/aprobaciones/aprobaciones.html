@@ -1,0 +1,74 @@
+=<app-navbar></app-navbar>
+
+<div class="admin-container">
+
+  <h1>Solicitudes Pendientes de Aprobación</h1>
+
+  <div class="cards-container">
+
+    <div
+      class="approval-card"
+      *ngFor="let solicitud of solicitudes"
+      [class.approved-card]="solicitud.estado === 'aprobado'">
+
+      <h3>{{ solicitud.tipoPeticion }}</h3>
+
+      <div class="card-info">
+        <p><strong>Nombre:</strong> {{ solicitud.nombreCompleto }}</p>
+        <p><strong>Correo:</strong> {{ solicitud.correo }}</p>
+        <p><strong>Fecha:</strong> {{ solicitud.fecha | date:'short' }}</p>
+        <p><strong>Estado:</strong> {{ solicitud.estado }}</p>
+      </div>
+
+      <!-- MINIATURAS -->
+      <div class="documents">
+        <p><strong>Documentos enviados:</strong></p>
+        <div class="document-thumbnails">
+          <img
+            *ngFor="let doc of solicitud.documentos"
+            [src]="doc"
+            alt="Documento"
+            (click)="abrirImagen(doc)"
+          />
+        </div>
+      </div>
+
+      <!-- ACCIONES -->
+      <div class="actions">
+        <button
+          class="approve"
+          (click)="aprobarSolicitud(solicitud)"
+          [disabled]="solicitud.estado === 'aprobado'">
+          Aprobar
+        </button>
+
+        <button
+          class="reject"
+          (click)="rechazarSolicitud(solicitud.id)">
+          Rechazar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE IMAGEN -->
+<div
+  class="image-modal"
+  *ngIf="imagenSeleccionada"
+  (click)="cerrarImagen()">
+
+  <img
+    [src]="imagenSeleccionada"
+    alt="Documento ampliado"
+    (click)="$event.stopPropagation()"
+  />
+
+  <span class="close" (click)="cerrarImagen()">✕</span>
+</div>
+
+<!-- TOAST -->
+<div *ngIf="mensaje" class="toast">
+  {{ mensaje }}
+</div>

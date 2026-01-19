@@ -1,0 +1,56 @@
+<app-navbar></app-navbar>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+<div class="admin-container">
+
+  <h1>Administración de la página</h1>
+
+  <!-- APARTADO DE VERIFICACIONES PENDIENTES -->
+  <div class="verification-summary highlight">
+    <h2>Verificaciones Pendientes</h2>
+    <p>
+      Total: 
+      <span class="badge">{{ verificaciones.length }}</span>
+    </p>
+    <button (click)="irAVerificaciones()">Ver Detalles</button>
+  </div>
+
+ 
+  <!-- TABLA DE USUARIOS EN UN CARD -->
+  <div class="table-card">
+    <h2>Usuarios Registrados</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Aprobado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.nombre }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{ usuario.rol }}</td>
+          <td>
+            <span class="status-circle" 
+                  [class.approved]="usuario.aprobado" 
+                  [class.pending]="!usuario.aprobado"></span>
+          </td>
+          <td>
+            <button class="delete" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
+          </td>
+        </tr>
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="5" style="text-align:center;">No hay usuarios agregados</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

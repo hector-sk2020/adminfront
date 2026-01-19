@@ -1,0 +1,36 @@
+<div class="login-container">
+  <form class="login-form" (ngSubmit)="onSubmit()">
+    <div class="form-heading">Login</div>
+
+    <div class="input-group">
+      <label class="label" for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+        required
+      />
+    </div>
+
+    <div class="input-group">
+      <label class="label" for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter your password"
+        required
+      />
+    </div>
+
+    <div class="forgot-password">
+      <a href="#">Forgot password?</a>
+    </div>
+
+    <button class="submit" type="submit">Log In</button>
+
+    <div class="signup-link">
+      Don't have an account?
+      <a href="#">Sign up</a>
+    </div>
+  </form>
+</div>

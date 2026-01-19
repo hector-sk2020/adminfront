@@ -1,0 +1,168 @@
+.admin-container {
+  padding: 20px;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* ===============================
+   CARD NORMAL
+================================*/
+.approval-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* ===============================
+   CARD APROBADA (VERDE)
+================================*/
+.approved-card {
+  background: #e8f5e9;
+  border-left: 6px solid #2e7d32;
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+  animation: approveGlow 0.4s ease;
+}
+
+/* ===============================
+   INFO
+================================*/
+.card-info p {
+  margin: 5px 0;
+}
+
+/* ===============================
+   MINIATURAS
+================================*/
+.document-thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.document-thumbnails img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.document-thumbnails img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* ===============================
+   BOTONES
+================================*/
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.approve {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reject {
+  background: #c62828;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #a5d6a7;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   MODAL CON ANIMACIÓN ORIGINAL
+================================*/
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.25s ease;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+  animation: zoomIn 0.3s ease;
+}
+
+.image-modal .close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 32px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===============================
+   TOAST
+================================*/
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #323232;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===============================
+   ANIMACIONES
+================================*/
+@keyframes zoomIn {
+  from {
+    transform: scale(0.75);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes approveGlow {
+  from {
+    transform: scale(0.97);
+    box-shadow: 0 0 0 rgba(46, 125, 50, 0);
+  }
+  to {
+    transform: scale(1);
+    box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+  }
+}

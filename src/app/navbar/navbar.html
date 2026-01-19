@@ -1,0 +1,52 @@
+<nav class="navbar">
+  <!-- LOGO -->
+  <div class="logo-container" routerLink="/inicio">
+    <img src="assets/logo.png" alt="RaicesMX" class="logo-img">
+    <span class="logo-text">RaicesMX</span>
+  </div>
+
+  <!-- BOTÓN HAMBURGUESA -->
+  <div class="menu-toggle" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- LINKS -->
+  <ul class="nav-links" [class.open]="menuOpen">
+    <li>
+      <a
+        routerLink="/inicio"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        Inicio
+      </a>
+    </li>
+
+    <li>
+      <a
+        routerLink="/aprobaciones"
+        routerLinkActive="active"
+        (click)="closeMenu()"
+      >
+        Aprobaciones
+      </a>
+    </li>
+
+    <!-- BOTÓN SALIR (MÓVIL) -->
+    <li class="logout-mobile">
+      <button class="logout-btn noselect" (click)="logout()">
+        <span class="text">Salir</span>
+      </button>
+    </li>
+  </ul>
+
+  <!-- BOTÓN SALIR (ESCRITORIO) -->
+  <div class="logout desktop-only">
+    <button class="logout-btn noselect" (click)="logout()">
+      <span class="text">Salir</span>
+    </button>
+  </div>
+</nav>
