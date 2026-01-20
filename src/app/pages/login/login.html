@@ -1,36 +1,30 @@
-<div class="login-container">
-  <form class="login-form" (ngSubmit)="onSubmit()">
-    <div class="form-heading">Login</div>
+<div class="login-page">
+  <!-- PANEL IZQUIERDO (DESKTOP) -->
+  <section class="left-panel">
+    <h1 class="brand">Raíces<span>MX</span></h1>
 
-    <div class="input-group">
-      <label class="label" for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        placeholder="Enter your email"
-        required
-      />
+    <img src="assets/logo.png" alt="Raícez MX" class="logo" />
+  </section>
+
+  <!-- PANEL DERECHO -->
+  <section class="right-panel">
+    <!-- CARD LOGO (MÓVIL) -->
+    <div class="mobile-brand">
+      <h1>Raíces<span>MX</span></h1>
+      <img src="assets/logo.png" alt="Raícez MX" />
     </div>
 
-    <div class="input-group">
-      <label class="label" for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        placeholder="Enter your password"
-        required
-      />
-    </div>
+    <!-- CARD FORM -->
+    <div class="login-card">
+      <h2>panel de administrador</h2>
 
-    <div class="forgot-password">
-      <a href="#">Forgot password?</a>
-    </div>
+      <form (ngSubmit)="onSubmit()">
+        <input type="email" placeholder="tu@email.com" required />
 
-    <button class="submit" type="submit">Log In</button>
+        <input type="password" placeholder="Contraseña" required />
 
-    <div class="signup-link">
-      Don't have an account?
-      <a href="#">Sign up</a>
+        <button type="submit">Iniciar Sesión</button>
+      </form>
     </div>
-  </form>
+  </section>
 </div>
