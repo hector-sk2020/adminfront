@@ -1,56 +1,305 @@
 <app-navbar></app-navbar>
 
 <main class="main-content">
-  <router-outlet></router-outlet>
+  <div class="dashboard-container">
+    <main class="dashboard-main">
+      <!-- BIENVENIDA -->
+      <section class="welcome-section">
+        <h2>¡Bienvenido, {{ admin?.fullName }}!</h2>
+        <p>Aquí puedes gestionar el marketplace de RaícesMX</p>
+      </section>
+
+      <!-- LOADING -->
+      <div class="loading-container" *ngIf="isLoadingStats">
+        <div class="spinner"></div>
+        <p>Cargando estadísticas...</p>
+      </div>
+
+      <!-- ERROR -->
+      <div class="error-container" *ngIf="errorLoadingStats">
+        <div class="error-icon">⚠️</div>
+        <h3>Error al cargar estadísticas</h3>
+        <button class="btn-retry" (click)="loadDashboardStats()">Reintentar</button>
+      </div>
+
+      <!-- ESTADÍSTICAS -->
+      <div class="stats-grid" *ngIf="!isLoadingStats && !errorLoadingStats && stats">
+        <!-- Usuarios -->
+        <div class="stat-card stat-primary">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-people-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
+              />
+            </svg>
+          </div>
+
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.totalUsers }}</span>
+            <span class="stat-label">Total Usuarios</span>
+          </div>
+        </div>
+
+        <!-- Vendedores -->
+        <div class="stat-card stat-success">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-house-dash-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z"
+              />
+              <path
+                d="m8 3.293 4.712 4.712A4.5 4.5 0 0 0 8.758 15H3.5A1.5 1.5 0 0 1 2 13.5V9.293z"
+              />
+              <path
+                d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 1 1 0-1"
+              />
+            </svg>
+          </div>
+
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.totalSellers }}</span>
+            <span class="stat-label">Vendedores Activos</span>
+          </div>
+        </div>
+
+        <!-- Compradores -->
+        <div class="stat-card stat-info">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-coin"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518z"
+              />
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+              <path
+                d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11m0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12"
+              />
+            </svg>
+          </div>
+
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.totalBuyers }}</span>
+            <span class="stat-label">Compradores</span>
+          </div>
+        </div>
+
+        <!-- Pendientes -->
+        <div class="stat-card stat-warning">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-hourglass-top"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M2 14.5a.5.5 0 0 0 .5.5h11a.5.5 0 1 0 0-1h-1v-1a4.5 4.5 0 0 0-2.557-4.06c-.29-.139-.443-.377-.443-.59v-.7c0-.213.154-.451.443-.59A4.5 4.5 0 0 0 12.5 3V2h1a.5.5 0 0 0 0-1h-11a.5.5 0 0 0 0 1h1v1a4.5 4.5 0 0 0 2.557 4.06c.29.139.443.377.443.59v.7c0 .213-.154.451-.443.59A4.5 4.5 0 0 0 3.5 13v1h-1a.5.5 0 0 0-.5.5m2.5-.5v-1a3.5 3.5 0 0 1 1.989-3.158c.533-.256 1.011-.79 1.011-1.491v-.702s.18.101.5.101.5-.1.5-.1v.7c0 .701.478 1.236 1.011 1.492A3.5 3.5 0 0 1 11.5 13v1z"
+              />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.pendingRequests }}</span>
+            <span class="stat-label">Pendientes</span>
+          </div>
+        </div>
+
+        <!-- Aprobadas -->
+        <div class="stat-card stat-approved">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-check-circle-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+              />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.approvedRequests }}</span>
+            <span class="stat-label">Aprobadas</span>
+          </div>
+        </div>
+
+        <!-- Rechazadas -->
+        <div class="stat-card stat-rejected">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-x-circle-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"
+              />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.rejectedRequests }}</span>
+            <span class="stat-label">Rechazadas</span>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="stat-card stat-total">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-bar-chart-line-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"
+              />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ stats.totalRequests }}</span>
+            <span class="stat-label">Total</span>
+          </div>
+        </div>
+
+        <!-- Porcentaje -->
+        <div class="stat-card stat-percentage">
+          <div class="stat-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-graph-up-arrow"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"
+              />
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-value">{{ tasaAprobacion }}%</span>
+            <span class="stat-label">Tasa Aprobación</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIONES -->
+      <section class="quick-actions">
+        <h3>Acciones Rápidas</h3>
+
+        <div class="actions-grid">
+          <!-- Solicitudes -->
+          <a routerLink="/aprobaciones" class="action-card">
+            <div class="action-icon">
+              <!-- Clipboard / Requests -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="2" width="6" height="4" rx="1"></rect>
+                <path d="M4 6h16v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"></path>
+              </svg>
+            </div>
+
+            <div class="action-content">
+              <h4>Solicitudes</h4>
+              <p>{{ stats?.pendingRequests || 0 }} pendientes</p>
+            </div>
+          </a>
+
+          <!-- Usuarios -->
+          <a routerLink="/usuarios" class="action-card">
+            <div class="action-icon">
+              <!-- Users -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+
+            <div class="action-content">
+              <h4>Usuarios</h4>
+              <p>{{ stats?.totalUsers || 0 }}</p>
+            </div>
+          </a>
+
+          <!-- Admins (solo super_admin) -->
+          <a routerLink="/admins" class="action-card" *ngIf="admin?.role === 'super_admin'">
+            <div class="action-icon">
+              <!-- Shield / Security -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="26"
+                height="26"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+
+            <div class="action-content">
+              <h4>Admins</h4>
+              <p>Solo Super</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
 </main>
-<div class="admin-container">
-
-  <h1>Administración de la página</h1>
-
-  <!-- APARTADO DE VERIFICACIONES PENDIENTES -->
-  <div class="verification-summary highlight">
-    <h2>Verificaciones Pendientes</h2>
-    <p>
-      Total: 
-      <span class="badge">{{ verificaciones.length }}</span>
-    </p>
-    <button (click)="irAVerificaciones()">Ver Detalles</button>
-  </div>
-
- 
-  <!-- TABLA DE USUARIOS EN UN CARD -->
-  <div class="table-card">
-    <h2>Usuarios Registrados</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Aprobado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let usuario of usuarios">
-          <td>{{ usuario.nombre }}</td>
-          <td>{{ usuario.email }}</td>
-          <td>{{ usuario.rol }}</td>
-          <td>
-            <span class="status-circle" 
-                  [class.approved]="usuario.aprobado" 
-                  [class.pending]="!usuario.aprobado"></span>
-          </td>
-          <td>
-            <button class="delete" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
-          </td>
-        </tr>
-        <tr *ngIf="usuarios.length === 0">
-          <td colspan="5" style="text-align:center;">No hay usuarios agregados</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>

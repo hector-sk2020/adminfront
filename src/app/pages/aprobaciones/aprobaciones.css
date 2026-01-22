@@ -1,168 +1,444 @@
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+
+/* Evita que el contenido quede debajo del navbar */
 .admin-container {
-  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto; /* centra horizontal */
+  padding: 3rem 3rem 2rem; /* ↑ más espacio arriba */
 }
 
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f5f7fb;
+  min-height: calc(100vh - 64px);
+}
+
+/* =========================
+   HEADER + FILTROS
+========================= */
+.filtro-btn svg {
+  width: 23px;
+  height: 23px;
+}
+
+.header-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.header-section h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  padding: 5rem 10rem 0.5rem 0;
+  text-align: center;
+  justify-content: center;
+}
+
+.filtros {
+  display: flex;
+  gap: 3rem; /* separación entre botones */
+  flex-wrap: wrap; /* no se rompen en pantallas chicas */
+  justify-content: center;
+}
+.filtro-btn {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  background: #e8e5e4;
+  color: #374151;
+  border: none;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.filtro-btn:hover {
+  background: #d1d5db;
+}
+
+.filtro-btn.active {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  color: white;
+}
+
+/* =========================
+   LOADING
+========================= */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 4rem;
+  color: #4b5563;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   ERROR
+========================= */
+.error-container {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn-retry {
+  margin-top: 1rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* =========================
+   LISTADO
+========================= */
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
+  gap: 2rem;
 }
 
-/* ===============================
-   CARD NORMAL
-================================*/
+/* =========================
+   EMPTY STATE
+========================= */
+.empty-state {
+  grid-column: 1 / -1;
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* =========================
+   CARD
+========================= */
 .approval-card {
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-/* ===============================
-   CARD APROBADA (VERDE)
-================================*/
+.approval-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.1);
+}
+
 .approved-card {
-  background: #e8f5e9;
-  border-left: 6px solid #2e7d32;
-  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
-  animation: approveGlow 0.4s ease;
+  border-left: 6px solid #22c55e;
 }
 
-/* ===============================
+.rejected-card {
+  border-left: 6px solid #ef4444;
+}
+
+/* =========================
+   CARD HEADER
+========================= */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================
    INFO
-================================*/
+========================= */
 .card-info p {
-  margin: 5px 0;
+  font-size: 1rem;
+  color: #374151;
+  margin: 0.25rem 0;
 }
 
-/* ===============================
-   MINIATURAS
-================================*/
+.rejection-reason {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* =========================
+   DOCUMENTOS
+========================= */
+.documents p {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
 .document-thumbnails {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 0.6rem;
 }
 
 .document-thumbnails img {
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 60px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .document-thumbnails img:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border-color: #2563eb;
 }
 
-/* ===============================
-   BOTONES
-================================*/
+/* =========================
+   ACCIONES
+========================= */
 .actions {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
-.approve {
-  background: #2e7d32;
-  color: white;
+.actions button {
+  flex: 1;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.reject {
-  background: #c62828;
+.actions .approve {
+  background: #22c55e;
   color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
-button:disabled {
-  background: #a5d6a7;
-  cursor: not-allowed;
+.actions .approve:hover {
+  background: #16a34a;
 }
 
-/* ===============================
-   MODAL CON ANIMACIÓN ORIGINAL
-================================*/
+.actions .reject {
+  background: #ef4444;
+  color: white;
+}
+
+.actions .reject:hover {
+  background: #dc2626;
+}
+
+/* =========================
+   REVIEWED MESSAGE
+========================= */
+.reviewed-message {
+  font-size: 0.8rem;
+  text-align: center;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* =========================
+   MODAL IMAGEN
+========================= */
 .image-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.25s ease;
+  align-items: center;
+  z-index: 1000;
 }
 
 .image-modal img {
   max-width: 90%;
   max-height: 90%;
-  border-radius: 10px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
-  animation: zoomIn 0.3s ease;
+  border-radius: 14px;
 }
 
 .image-modal .close {
   position: absolute;
   top: 20px;
   right: 30px;
-  font-size: 32px;
+  font-size: 2rem;
   color: white;
   cursor: pointer;
 }
 
-/* ===============================
+/* =========================
+   MODAL RECHAZO
+========================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.modal-header .close {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.modal-body {
+  margin-top: 1rem;
+}
+
+.modal-body textarea {
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.6rem;
+  border: 1px solid #d1d5db;
+  resize: none;
+  margin-top: 0.4rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+}
+
+.btn-cancel {
+  flex: 1;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+.btn-confirm-reject {
+  flex: 1;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+/* =========================
    TOAST
-================================*/
+========================= */
 .toast {
   position: fixed;
   bottom: 30px;
   right: 30px;
-  background: #323232;
+  background: #111827;
   color: white;
-  padding: 12px 20px;
-  border-radius: 6px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-  animation: fadeIn 0.3s ease;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  z-index: 2000;
 }
-
-/* ===============================
-   ANIMACIONES
-================================*/
-@keyframes zoomIn {
-  from {
-    transform: scale(0.75);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes approveGlow {
-  from {
-    transform: scale(0.97);
-    box-shadow: 0 0 0 rgba(46, 125, 50, 0);
-  }
-  to {
-    transform: scale(1);
-    box-shadow: 0 6px 16px rgba(46, 125, 50, 0.3);
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1.5rem 1rem;
   }
 }

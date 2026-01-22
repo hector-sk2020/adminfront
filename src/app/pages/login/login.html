@@ -2,8 +2,7 @@
   <!-- PANEL IZQUIERDO (DESKTOP) -->
   <section class="left-panel">
     <h1 class="brand">Raíces<span>MX</span></h1>
-
-    <img src="assets/logo.png" alt="Raícez MX" class="logo" />
+    <img src="assets/logo.png" alt="Raíces MX" class="logo" />
   </section>
 
   <!-- PANEL DERECHO -->
@@ -11,19 +10,54 @@
     <!-- CARD LOGO (MÓVIL) -->
     <div class="mobile-brand">
       <h1>Raíces<span>MX</span></h1>
-      <img src="assets/logo.png" alt="Raícez MX" />
+      <img src="assets/logo.png" alt="Raíces MX" />
     </div>
 
     <!-- CARD FORM -->
     <div class="login-card">
       <h2>panel de administrador</h2>
 
+      <!-- Mensaje de error -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="icon-alert">⚠️</i>
+        {{ errorMessage }}
+      </div>
+
       <form (ngSubmit)="onSubmit()">
-        <input type="email" placeholder="tu@email.com" required />
+        <!-- Email -->
+        <div class="form-group">
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="tu@email.com"
+            [disabled]="isLoading"
+            required
+            autocomplete="email"
+          />
+        </div>
 
-        <input type="password" placeholder="Contraseña" required />
+        <!-- Password -->
+        <div class="form-group">
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Contraseña"
+            [disabled]="isLoading"
+            required
+            autocomplete="current-password"
+          />
+        </div>
 
-        <button type="submit">Iniciar Sesión</button>
+        <!-- Botón de submit -->
+        <button type="submit" [disabled]="isLoading" [class.loading]="isLoading">
+          <span *ngIf="!isLoading">Iniciar Sesión</span>
+          <span *ngIf="isLoading">
+            <span class="spinner"></span>
+            Verificando...
+          </span>
+        </button>
       </form>
     </div>
   </section>
