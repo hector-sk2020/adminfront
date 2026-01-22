@@ -80,7 +80,7 @@ export interface AdminsResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = '${environment.apiBaseUrl}/admin';
+  private apiUrl = `${environment.apiUrl}/admin`;
 
   /**
    * Estado reactivo del admin actual
