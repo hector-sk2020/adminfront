@@ -1,47 +1,70 @@
-import { Component } from '@angular/core';
+// src/app/pages/inicio/inicio.component.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { NavbarComponent } from '../../navbar/navbar'; // Ajusta ruta según tu proyecto
+import { RouterLink } from '@angular/router';
+import { AuthService, DashboardStats } from '../../services/auth.service';
+import { NavbarComponent } from '../../navbar/navbar';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, RouterModule],
+  imports: [CommonModule, RouterLink, NavbarComponent, RouterModule],
   templateUrl: './inicio.html',
-  styleUrls: ['./inicio.css']
+  styleUrls: ['./inicio.css'],
 })
-export class InicioComponent {
+export class InicioComponent implements OnInit {
+  private authService = inject(AuthService);
 
-  constructor(private router: Router) {}
-
-  // Formulario para agregar nuevo usuario
-  nuevoUsuario = { nombre: '', email: '', rol: 'Usuario', aprobado: false };
-
-  // Usuarios ya existentes
-  usuarios: any[] = [
-    { id: 1, nombre: 'Juan Pérez', email: 'juan@mail.com', rol: 'Usuario', aprobado: true },
-    { id: 2, nombre: 'Ana Gómez', email: 'ana@mail.com', rol: 'Admin', aprobado: false },
-    { id: 3, nombre: 'Carlos Ruiz', email: 'carlos@mail.com', rol: 'Usuario', aprobado: true },
-  ];
-
-  // Verificaciones pendientes
-  verificaciones: any[] = [
-    { id: 1, tipo: 'Alta de usuario', usuario: 'Ana Gómez', fecha: new Date() },
-    { id: 2, tipo: 'Cambio de rol', usuario: 'Carlos Ruiz', fecha: new Date() },
-    { id: 3, tipo: 'verificacion', usuario: 'juan rasputia', fecha: new Date() }
-
-  ];
-
-
-
-  eliminarUsuario(id: number) {
-    this.usuarios = this.usuarios.filter(u => u.id !== id);
+  // Estado del admin actual
+  get admin() {
+    return this.authService.currentAdmin();
   }
 
-  irAVerificaciones() {
-    this.router.navigate(['/aprobaciones']);
+  // Estadísticas del dashboard
+  stats: DashboardStats | null = null;
+  isLoadingStats = true;
+  errorLoadingStats = false;
+
+  ngOnInit() {
+    this.loadDashboardStats();
   }
 
+  /**
+   * Carga las estadísticas del dashboard
+   */
+  loadDashboardStats() {
+    this.isLoadingStats = true;
+    this.errorLoadingStats = false;
 
+    this.authService.getDashboardStats().subscribe({
+      next: (response) => {
+        console.log('✅ Estadísticas cargadas:', response);
+        this.stats = response.stats;
+        this.isLoadingStats = false;
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar estadísticas:', error);
+        this.errorLoadingStats = true;
+        this.isLoadingStats = false;
+      },
+    });
+  }
+
+  /**
+   * Cierra la sesión del admin
+   */
+  logout() {
+    if (confirm('¿Estás seguro de cerrar sesión?')) {
+      this.authService.logout().subscribe();
+    }
+  }
+
+  /**
+   * Calcula el porcentaje de aprobación
+   */
+  get tasaAprobacion(): number {
+    if (!this.stats || this.stats.totalRequests === 0) return 0;
+    return Math.round((this.stats.approvedRequests / this.stats.totalRequests) * 100);
+  }
 }

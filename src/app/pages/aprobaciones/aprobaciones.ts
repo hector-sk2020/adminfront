@@ -1,101 +1,246 @@
-import { Component, HostListener } from '@angular/core';
+// src/app/pages/aprobaciones/aprobaciones.component.ts
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { SellerRequestsService, SellerRequest } from '../../services/seller-requests.service';
 import { NavbarComponent } from '../../navbar/navbar';
-
-interface Solicitud {
-  id: number;
-  nombreCompleto: string;
-  correo: string;
-  tipoPeticion: string;
-  fecha: Date;
-  estado: 'pendiente' | 'aprobado';
-  documentos: string[];
-}
 
 @Component({
   selector: 'app-aprobaciones',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, RouterModule],
+  imports: [CommonModule, FormsModule, NavbarComponent],
   templateUrl: './aprobaciones.html',
-  styleUrls: ['./aprobaciones.css']
+  styleUrls: ['./aprobaciones.css'],
 })
-export class AprobacionesComponent {
+export class AprobacionesComponent implements OnInit {
+  private sellerRequestsService = inject(SellerRequestsService);
 
-  constructor(private router: Router) {}
+  // Estado de las solicitudes
+  solicitudes: SellerRequest[] = [];
+  isLoading = true;
+  errorMessage = '';
 
-  mensaje = '';
+  // Filtro activo
+  filtroActivo: 'all' | 'pending' | 'approved' | 'rejected' = 'pending';
+
+  // Modal de imagen
   imagenSeleccionada: string | null = null;
 
-  solicitudes: Solicitud[] = [
-    {
-      id: 1,
-      nombreCompleto: 'María Hernández',
-      correo: 'maria.hernandez@empresa.com',
-      tipoPeticion: 'Verificación de identidad',
-      fecha: new Date(),
-      estado: 'pendiente',
-      documentos: [
-        'https://via.placeholder.com/900x550/4e342e/ffffff?text=INE+Frente',
-        'https://via.placeholder.com/900x550/6f4e37/ffffff?text=INE+Reverso'
-      ]
-    },
-    {
-      id: 2,
-      nombreCompleto: 'Luis Ramírez',
-      correo: 'luis.ramirez@empresa.com',
-      tipoPeticion: 'Acceso al panel administrativo',
-      fecha: new Date(),
-      estado: 'pendiente',
-      documentos: [
-        'https://via.placeholder.com/900x550/5d4037/ffffff?text=Identificacion',
-        'https://via.placeholder.com/900x550/8d6e63/ffffff?text=Comprobante'
-      ]
-    }
-  ];
+  // Modal de rechazo
+  mostrarModalRechazo = false;
+  solicitudARevisar: SellerRequest | null = null;
+  razonRechazo = '';
 
-  // ===============================
-  // ACCIONES
-  // ===============================
+  // Toast
+  mensaje = '';
 
-  aprobarSolicitud(solicitud: Solicitud) {
-    solicitud.estado = 'aprobado';
-    this.mostrarMensaje('Solicitud aprobada correctamente ✅');
+  ngOnInit() {
+    this.cargarSolicitudes();
   }
 
-  rechazarSolicitud(id: number) {
-    this.solicitudes = this.solicitudes.filter(s => s.id !== id);
-    this.mostrarMensaje('Solicitud rechazada ❌');
+  /**
+   * Carga las solicitudes del backend
+   */
+  cargarSolicitudes() {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.sellerRequestsService.getRequests(this.filtroActivo).subscribe({
+      next: (response) => {
+        console.log('✅ Solicitudes cargadas:', response);
+        this.solicitudes = response.requests;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar solicitudes:', error);
+        this.errorMessage = 'Error al cargar las solicitudes';
+        this.isLoading = false;
+      },
+    });
   }
 
-  // ===============================
-  // MODAL DE IMÁGENES
-  // ===============================
-
-  abrirImagen(img: string) {
-    this.imagenSeleccionada = img;
+  /**
+   * Cambia el filtro y recarga
+   */
+  cambiarFiltro(filtro: 'all' | 'pending' | 'approved' | 'rejected') {
+    this.filtroActivo = filtro;
+    this.cargarSolicitudes();
   }
 
+  /**
+   * Abre el modal de imagen
+   */
+  abrirImagen(url: string) {
+    this.imagenSeleccionada = url;
+  }
+
+  /**
+   * Cierra el modal de imagen
+   */
   cerrarImagen() {
     this.imagenSeleccionada = null;
   }
 
-  // cerrar con ESC
-  @HostListener('document:keydown.escape')
-  cerrarConEsc() {
-    this.cerrarImagen();
+  /**
+   * Aprobar solicitud directamente
+   */
+  aprobarSolicitud(solicitud: SellerRequest) {
+    if (solicitud.status !== 'pending') {
+      this.mostrarToast('Esta solicitud ya fue revisada');
+      return;
+    }
+
+    if (!confirm(`¿Aprobar la solicitud de ${solicitud.user.fullName}?`)) {
+      return;
+    }
+
+    this.sellerRequestsService
+      .reviewRequest(solicitud.id, {
+        status: 'approved',
+      })
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Solicitud aprobada:', response);
+          this.mostrarToast(`✅ Solicitud de ${solicitud.user.fullName} aprobada`);
+
+          // Actualizar el estado local
+          solicitud.status = 'approved';
+          solicitud.reviewedAt = new Date();
+
+          // Recargar después de 1 segundo
+          setTimeout(() => {
+            this.cargarSolicitudes();
+          }, 1000);
+        },
+        error: (error) => {
+          console.error('❌ Error al aprobar:', error);
+          this.mostrarToast('❌ Error al aprobar la solicitud');
+        },
+      });
   }
 
-  // ===============================
-  // UTILIDADES
-  // ===============================
+  /**
+   * Abre modal de rechazo
+   */
+  rechazarSolicitud(solicitud: SellerRequest) {
+    if (solicitud.status !== 'pending') {
+      this.mostrarToast('Esta solicitud ya fue revisada');
+      return;
+    }
 
-  mostrarMensaje(texto: string) {
+    this.solicitudARevisar = solicitud;
+    this.razonRechazo = '';
+    this.mostrarModalRechazo = true;
+  }
+
+  /**
+   * Confirma el rechazo con razón
+   */
+  confirmarRechazo() {
+    if (!this.razonRechazo.trim()) {
+      alert('Por favor ingresa una razón del rechazo');
+      return;
+    }
+
+    if (!this.solicitudARevisar) return;
+
+    this.sellerRequestsService
+      .reviewRequest(this.solicitudARevisar.id, {
+        status: 'rejected',
+        rejectionReason: this.razonRechazo,
+      })
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Solicitud rechazada:', response);
+          this.mostrarToast(`❌ Solicitud rechazada`);
+
+          // Cerrar modal
+          this.cerrarModalRechazo();
+
+          // Recargar después de 1 segundo
+          setTimeout(() => {
+            this.cargarSolicitudes();
+          }, 1000);
+        },
+        error: (error) => {
+          console.error('❌ Error al rechazar:', error);
+          this.mostrarToast('Error al rechazar la solicitud');
+        },
+      });
+  }
+
+  /**
+   * Cierra el modal de rechazo
+   */
+  cerrarModalRechazo() {
+    this.mostrarModalRechazo = false;
+    this.solicitudARevisar = null;
+    this.razonRechazo = '';
+  }
+
+  /**
+   * Muestra un toast temporal
+   */
+  private mostrarToast(texto: string) {
     this.mensaje = texto;
-    setTimeout(() => this.mensaje = '', 3000);
+    setTimeout(() => {
+      this.mensaje = '';
+    }, 3000);
   }
 
-  volverInicio() {
-    this.router.navigate(['/inicio']);
+  /**
+   * Obtiene los documentos de una solicitud
+   */
+  getDocumentos(solicitud: SellerRequest): string[] {
+    const docs = [solicitud.ineFrontUrl];
+    if (solicitud.ineBackUrl) {
+      docs.push(solicitud.ineBackUrl);
+    }
+    return docs;
+  }
+
+  /**
+   * Formatea la fecha
+   */
+  formatearFecha(fecha: Date): string {
+    return new Date(fecha).toLocaleString('es-MX', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  /**
+   * Obtiene el badge de estado
+   */
+  getEstadoClass(status: string): string {
+    switch (status) {
+      case 'pending':
+        return 'badge-pending';
+      case 'approved':
+        return 'badge-approved';
+      case 'rejected':
+        return 'badge-rejected';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Obtiene el texto del estado
+   */
+  getEstadoTexto(status: string): string {
+    switch (status) {
+      case 'pending':
+        return 'Pendiente';
+      case 'approved':
+        return 'Aprobada';
+      case 'rejected':
+        return 'Rechazada';
+      default:
+        return status;
+    }
   }
 }

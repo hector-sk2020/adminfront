@@ -1,71 +1,191 @@
-=<app-navbar></app-navbar>
+<!-- src/app/pages/aprobaciones/aprobaciones.html -->
+<app-navbar></app-navbar>
 
 <div class="admin-container">
+  <!-- HEADER CON FILTROS -->
+  <div class="header-section">
+    <h1>Solicitudes</h1>
 
-  <h1>Solicitudes Pendientes de Aprobación</h1>
+    <div class="filtros">
+      <!-- Pendientes -->
+      <button
+        class="filtro-btn"
+        [class.active]="filtroActivo === 'pending'"
+        (click)="cambiarFiltro('pending')"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+          <path d="M12 7V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        Pendientes
+      </button>
 
-  <div class="cards-container">
+      <!-- Aprobadas -->
+      <button
+        class="filtro-btn"
+        [class.active]="filtroActivo === 'approved'"
+        (click)="cambiarFiltro('approved')"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M5 13L9 17L19 7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Aprobadas
+      </button>
 
+      <!-- Rechazadas -->
+      <button
+        class="filtro-btn"
+        [class.active]="filtroActivo === 'rejected'"
+        (click)="cambiarFiltro('rejected')"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M6 6L18 18M6 18L18 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        Rechazadas
+      </button>
+
+      <!-- Todas -->
+      <button
+        class="filtro-btn"
+        [class.active]="filtroActivo === 'all'"
+        (click)="cambiarFiltro('all')"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+          <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" />
+          <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+          <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" />
+        </svg>
+        Todas
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Cargando solicitudes...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div class="error-container" *ngIf="errorMessage && !isLoading">
+    <div class="error-icon">⚠️</div>
+    <h3>{{ errorMessage }}</h3>
+    <button class="btn-retry" (click)="cargarSolicitudes()">Reintentar</button>
+  </div>
+
+  <!-- LISTA DE SOLICITUDES -->
+  <div class="cards-container" *ngIf="!isLoading && !errorMessage">
+    <!-- Sin solicitudes -->
+    <div class="empty-state" *ngIf="solicitudes.length === 0">
+      <div class="empty-icon">📭</div>
+      <h3>No hay solicitudes {{ getEstadoTexto(filtroActivo).toLowerCase() }}</h3>
+      <p>Las solicitudes aparecerán aquí cuando se registren</p>
+    </div>
+
+    <!-- Cards de solicitudes -->
     <div
       class="approval-card"
       *ngFor="let solicitud of solicitudes"
-      [class.approved-card]="solicitud.estado === 'aprobado'">
-
-      <h3>{{ solicitud.tipoPeticion }}</h3>
-
-      <div class="card-info">
-        <p><strong>Nombre:</strong> {{ solicitud.nombreCompleto }}</p>
-        <p><strong>Correo:</strong> {{ solicitud.correo }}</p>
-        <p><strong>Fecha:</strong> {{ solicitud.fecha | date:'short' }}</p>
-        <p><strong>Estado:</strong> {{ solicitud.estado }}</p>
+      [class.approved-card]="solicitud.status === 'approved'"
+      [class.rejected-card]="solicitud.status === 'rejected'"
+    >
+      <!-- HEADER DE LA CARD -->
+      <div class="card-header">
+        <h3>{{ solicitud.user.fullName }}</h3>
+        <span class="badge" [class]="getEstadoClass(solicitud.status)">
+          {{ getEstadoTexto(solicitud.status) }}
+        </span>
       </div>
 
-      <!-- MINIATURAS -->
+      <!-- INFO DEL SOLICITANTE -->
+      <div class="card-info">
+        <p><strong>📧 Email:</strong> {{ solicitud.user.email }}</p>
+        <p><strong>🆔 CURP:</strong> {{ solicitud.curp }}</p>
+        <p><strong>📅 Enviada:</strong> {{ formatearFecha(solicitud.createdAt) }}</p>
+        <p *ngIf="solicitud.reviewedAt">
+          <strong>✔️ Revisada:</strong> {{ formatearFecha(solicitud.reviewedAt) }}
+        </p>
+        <p *ngIf="solicitud.rejectionReason" class="rejection-reason">
+          <strong>❌ Razón de rechazo:</strong> {{ solicitud.rejectionReason }}
+        </p>
+      </div>
+
+      <!-- DOCUMENTOS -->
       <div class="documents">
-        <p><strong>Documentos enviados:</strong></p>
+        <p><strong>📄 Documentos (INE):</strong></p>
         <div class="document-thumbnails">
           <img
-            *ngFor="let doc of solicitud.documentos"
+            *ngFor="let doc of getDocumentos(solicitud)"
             [src]="doc"
-            alt="Documento"
+            alt="INE"
             (click)="abrirImagen(doc)"
           />
         </div>
       </div>
 
-      <!-- ACCIONES -->
-      <div class="actions">
-        <button
-          class="approve"
-          (click)="aprobarSolicitud(solicitud)"
-          [disabled]="solicitud.estado === 'aprobado'">
-          Aprobar
-        </button>
+      <!-- ACCIONES (solo si está pendiente) -->
+      <div class="actions" *ngIf="solicitud.status === 'pending'">
+        <button class="approve" (click)="aprobarSolicitud(solicitud)">✅ Aprobar</button>
 
-        <button
-          class="reject"
-          (click)="rechazarSolicitud(solicitud.id)">
-          Rechazar
-        </button>
+        <button class="reject" (click)="rechazarSolicitud(solicitud)">❌ Rechazar</button>
       </div>
 
+      <!-- MENSAJE SI YA FUE REVISADA -->
+      <div class="reviewed-message" *ngIf="solicitud.status !== 'pending'">
+        <p *ngIf="solicitud.status === 'approved'">✅ Esta solicitud ya fue aprobada</p>
+        <p *ngIf="solicitud.status === 'rejected'">❌ Esta solicitud fue rechazada</p>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- MODAL DE IMAGEN -->
-<div
-  class="image-modal"
-  *ngIf="imagenSeleccionada"
-  (click)="cerrarImagen()">
-
-  <img
-    [src]="imagenSeleccionada"
-    alt="Documento ampliado"
-    (click)="$event.stopPropagation()"
-  />
-
+<div class="image-modal" *ngIf="imagenSeleccionada" (click)="cerrarImagen()">
+  <img [src]="imagenSeleccionada" alt="Documento ampliado" (click)="$event.stopPropagation()" />
   <span class="close" (click)="cerrarImagen()">✕</span>
+</div>
+
+<!-- MODAL DE RECHAZO -->
+<div class="modal-overlay" *ngIf="mostrarModalRechazo" (click)="cerrarModalRechazo()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Rechazar Solicitud</h3>
+      <span class="close" (click)="cerrarModalRechazo()">✕</span>
+    </div>
+
+    <div class="modal-body">
+      <p>
+        ¿Estás seguro de rechazar la solicitud de
+        <strong>{{ solicitudARevisar?.user?.fullName || 'este usuario' }}</strong
+        >?
+      </p>
+
+      <label for="razonRechazo">Razón del rechazo: *</label>
+      <textarea
+        id="razonRechazo"
+        [(ngModel)]="razonRechazo"
+        placeholder="Ej: Documentos ilegibles, CURP no coincide, etc."
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="cerrarModalRechazo()">Cancelar</button>
+      <button class="btn-confirm-reject" (click)="confirmarRechazo()">Confirmar Rechazo</button>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
