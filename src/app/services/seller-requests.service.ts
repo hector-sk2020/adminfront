@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-
 export interface SellerRequest {
   id: number;
   userId: number;
@@ -51,7 +50,7 @@ export interface DeleteRequestResponse {
   providedIn: 'root',
 })
 export class SellerRequestsService {
-  private apiUrl = '${environment.apiBaseUrl}/seller-requests';
+  private apiUrl = `${environment.apiUrl}/seller-requests`;
 
   constructor(private http: HttpClient) {}
 
