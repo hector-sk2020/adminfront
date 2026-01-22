@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, catchError, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // ========== INTERFACES ==========
 
@@ -79,7 +80,7 @@ export interface AdminsResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/admin';
+  private apiUrl = '${environment.apiBaseUrl}/admin';
 
   /**
    * Estado reactivo del admin actual

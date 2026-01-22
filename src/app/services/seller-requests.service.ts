@@ -2,6 +2,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 export interface SellerRequest {
   id: number;
@@ -49,7 +51,7 @@ export interface DeleteRequestResponse {
   providedIn: 'root',
 })
 export class SellerRequestsService {
-  private apiUrl = 'http://localhost:3000/seller-requests';
+  private apiUrl = '${environment.apiBaseUrl}/seller-requests';
 
   constructor(private http: HttpClient) {}
 
